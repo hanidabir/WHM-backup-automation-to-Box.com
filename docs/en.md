@@ -1,6 +1,6 @@
-# WHM Monthly Backup to Box (Full Setup Guide)
+# WHM Backup to Box (Full Setup Guide)
 
-> This guide walks through every step required to automate WHM (cPanel) account backups, upload them to Box using `rclone`, clean up old logs, and optionally send Telegram notifications — all ready to be triggered monthly (via cron or n8n).
+> This guide walks through every step required to automate WHM (cPanel) account backups, upload them to Box using `rclone`, clean up old logs, and optionally send Telegram notifications — all ready to be triggered monthly/weekly (via cron or n8n).
 
 ---
 
@@ -150,7 +150,7 @@ mysql --defaults-file=/root/.my.cnf -e "SHOW DATABASES;"
 
 ## 4 — Backup Script (Full Code)
 
-Save the file from this repository as `/root/whm_monthly_backup_to_box_json.sh` on your server.
+Save the file from this repository as `/root/whm_backup_to_box.sh` on your server.
 Replace placeholders:
 
 * `TELEGRAM_BOT_TOKEN` → your bot token
@@ -159,7 +159,7 @@ Replace placeholders:
 Make it executable:
 
 ```bash
-chmod 700 /root/whm_monthly_backup_to_box_json.sh
+chmod 700 /root/whm_backup_to_box.sh
 ```
 
 ---
@@ -171,7 +171,7 @@ chmod 700 /root/whm_monthly_backup_to_box_json.sh
 1. Start your Telegram bot with `/start`.
 2. Run:
   ```bash
-  TEST_USER=username bash /root/whm_monthly_backup_to_box_json.sh
+  TEST_USER=username bash /root/whm_backup_to_box.sh
   ```
 
 Expected final output:
@@ -183,7 +183,7 @@ Expected final output:
 Check logs:
 
 ```bash
-cat /root/whm_monthly_backup.log
+cat /root/whm_backup.log
 ```
 
 Check Box folder:
@@ -209,7 +209,7 @@ crontab -e
 Add:
 
 ```
-0 3 1 * * TEST_USER="" bash /root/whm_monthly_backup_to_box_json.sh >> /root/whm_cron.log 2>&1
+0 3 1 * * TEST_USER="" bash /root/whm_backup_to_box.sh >> /root/whm_cron.log 2>&1
 ```
 
 Alternatively, create `/root/run_whm_backup.sh`:
@@ -217,7 +217,7 @@ Alternatively, create `/root/run_whm_backup.sh`:
 ```bash
 #!/bin/bash
 export PATH="/usr/local/bin:/usr/bin:/bin"
-bash /root/whm_monthly_backup_to_box_json.sh
+bash /root/whm_backup_to_box.sh
 ```
 
 Then:
