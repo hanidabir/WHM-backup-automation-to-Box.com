@@ -1,6 +1,6 @@
-# پشتیبان‌گیری ماهانه WHM به Box (راهنمای کامل راه‌اندازی)
+# پشتیبان‌گیری WHM به Box (راهنمای کامل راه‌اندازی)
 
-> این راهنما همه مراحل لازم برای خودکارسازی پشتیبان‌گیری از حساب‌های WHM (cPanel)، آپلود آنها به Box با استفاده از `rclone`، پاک‌سازی لاگ‌های قدیمی و ارسال اطلاعیه‌های تلگرام (اختیاری) را توضیح می‌دهد — همه آماده اجرا به صورت ماهانه (با cron یا n8n).
+> این راهنما همه مراحل لازم برای خودکارسازی پشتیبان‌گیری از حساب‌های WHM (cPanel)، آپلود آنها به Box با استفاده از `rclone`، پاک‌سازی لاگ‌های قدیمی و ارسال اطلاعیه‌های تلگرام (اختیاری) را توضیح می‌دهد — همه آماده اجرا به صورت ماهانه/هفتگی (با cron یا n8n).
 
 ---
 
@@ -153,7 +153,7 @@ mysql --defaults-file=/root/.my.cnf -e "SHOW DATABASES;"
 
 ## ۴ — اسکریپت پشتیبان‌گیری (کد کامل)
 
-فایل موجود در این ریپازیتوری را روی سرور خود در مسیر `/root/whm_monthly_backup_to_box_json.sh` ذخیره کنید.
+فایل موجود در این ریپازیتوری را روی سرور خود در مسیر `/root/whm_backup_to_box.sh` ذخیره کنید.
 جایگزین‌های زیر را تغییر دهید:
 
 * `TELEGRAM_BOT_TOKEN` → توکن ربات شما
@@ -162,7 +162,7 @@ mysql --defaults-file=/root/.my.cnf -e "SHOW DATABASES;"
 اجرای فایل را فعال کنید:
 
 ```bash
-chmod 700 /root/whm_monthly_backup_to_box_json.sh
+chmod 700 /root/whm_backup_to_box.sh
 ```
 
 ---
@@ -175,7 +175,7 @@ chmod 700 /root/whm_monthly_backup_to_box_json.sh
 2. اجرا کنید:
 
 ```bash
-TEST_USER=username bash /root/whm_monthly_backup_to_box_json.sh
+TEST_USER=username bash /root/whm_backup_to_box.sh
 ```
 
 خروجی نهایی مورد انتظار:
@@ -187,7 +187,7 @@ TEST_USER=username bash /root/whm_monthly_backup_to_box_json.sh
 بررسی لاگ‌ها:
 
 ```bash
-cat /root/whm_monthly_backup.log
+cat /root/whm_backup.log
 ```
 
 بررسی پوشه Box:
@@ -213,7 +213,7 @@ crontab -e
 اضافه کنید:
 
 ```
-0 3 1 * * TEST_USER="" bash /root/whm_monthly_backup_to_box_json.sh >> /root/whm_cron.log 2>&1
+0 3 1 * * TEST_USER="" bash /root/whm_backup_to_box.sh >> /root/whm_cron.log 2>&1
 ```
 
 همچنین می‌توانید فایل `/root/run_whm_backup.sh` بسازید:
@@ -221,7 +221,7 @@ crontab -e
 ```bash
 #!/bin/bash
 export PATH="/usr/local/bin:/usr/bin:/bin"
-bash /root/whm_monthly_backup_to_box_json.sh
+bash /root/whm_backup_to_box.sh
 ```
 
 سپس:
